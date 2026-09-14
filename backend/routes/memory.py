@@ -70,6 +70,6 @@ async def memory_info():
     """Get embedding model info."""
     try:
         info = EmbeddingService.get_model_info()
-        return {"status": "ready", **info}
+        return {"status": "ready" if info["enabled"] else "disabled", **info}
     except Exception as e:
         return {"status": "not_loaded", "error": str(e)}

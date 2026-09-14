@@ -66,9 +66,6 @@ async def startup_event():
         get_supabase()
         print("Supabase client initialized")
     except Exception as e:
-        # Keep the process alive so /api/health and CORS diagnostics still work.
-        # Requests that need Supabase will return their own error until its
-        # credentials/connectivity are corrected.
         print(f"Supabase initialization failed: {e}")
 
     try:
@@ -80,13 +77,6 @@ async def startup_event():
         print("Agent graph initialized")
     except Exception as e:
         print(f"Agent initialization failed: {e}")
-
-    try:
-        from memory.embeddings import EmbeddingService
-        info = EmbeddingService.get_model_info()
-        print(f"Embedding model: {info['model_name']} ({info['dimension']}d)")
-    except Exception as e:
-        print(f"Embedding model will load on first use: {e}")
 
     print("Agentic AI Platform v0.5.0 started")
     print("REST: http://localhost:8000/docs")

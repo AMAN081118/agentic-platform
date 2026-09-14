@@ -21,8 +21,20 @@ class EmbeddingService:
     _model_name: str = ""
 
     @classmethod
+    def is_enabled(cls) -> bool:
+        """Whether this instance is allowed to load the local ML model."""
+        return os.getenv("ENABLE_EMBEDDINGS", "true").strip().lower() in {
+            "1", "true", "yes", "on"
+        }
+
+    @classmethod
     def _load_model(cls) -> None:
         """Load the embedding model (lazy, one-time)."""
+        if not cls.is_enabled():
+            raise RuntimeError(
+                "Embeddings are disabled (set ENABLE_EMBEDDINGS=true to enable them)."
+            )
+
         if cls._model is not None:
             return
 
@@ -126,8 +138,15 @@ class EmbeddingService:
     @classmethod
     def get_model_info(cls) -> dict:
         """Get info about the loaded model."""
+        if not cls.is_enabled():
+            return {
+                "enabled": False,
+                "model_name": os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
+            }
+
         cls._load_model()
         return {
+            "enabled": True,
             "model_name": cls._model_name,
             "dimension": cls.get_dimension(),
             "max_seq_length": cls._model.max_seq_length,

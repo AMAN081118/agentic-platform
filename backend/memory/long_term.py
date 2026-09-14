@@ -35,7 +35,7 @@ class LongTermMemory:
         Returns:
             True if stored successfully
         """
-        if not content or not content.strip():
+        if not EmbeddingService.is_enabled() or not content or not content.strip():
             return False
 
         try:
@@ -92,7 +92,7 @@ class LongTermMemory:
         Returns:
             Number of successfully stored items
         """
-        if not contents:
+        if not EmbeddingService.is_enabled() or not contents:
             return 0
 
         # Filter empty strings
@@ -144,7 +144,7 @@ class LongTermMemory:
         Returns:
             List of dicts with 'content', 'similarity', 'metadata'
         """
-        if not query or not query.strip():
+        if not EmbeddingService.is_enabled() or not query or not query.strip():
             return []
 
         try:
