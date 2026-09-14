@@ -5,6 +5,7 @@ const MAX_MESSAGE_LENGTH = 10000;
 const MAX_MESSAGES_DISPLAY = 200;
 
 export default function useChat() {
+  const API_URL = import.meta.env.DEV ? "" : import.meta.env.VITE_API_URL;
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
@@ -163,7 +164,7 @@ export default function useChat() {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30000);
 
-      const res = await fetch("/api/chat", {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ agent, message: text, session_id: sessionId }),
@@ -210,7 +211,7 @@ export default function useChat() {
 
   const loadSession = useCallback(async (id) => {
     try {
-      const res = await fetch(`/api/sessions/${id}`);
+      const res = await fetch(`${API_URL}/api/sessions/${id}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
