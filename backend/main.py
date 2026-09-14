@@ -2,7 +2,7 @@
 Agentic AI Platform — Main Entry Point
 """
 
-import uuid
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -23,14 +23,25 @@ app = FastAPI(
 )
 
 # Middleware (order matters — first added = outermost)
+app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
+# Add CORS last so it is the outermost middleware. That ensures CORS headers
+# are present even when a downstream middleware or route returns an error.
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173,https://a2z-agents.vercel.app",
+    ).split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=os.getenv("CORS_ORIGIN_REGEX") or None,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
-app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
 
 # REST Routes
 app.include_router(health_router, prefix="/api", tags=["Health"])

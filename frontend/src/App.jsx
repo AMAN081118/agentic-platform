@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import ChatPage from "./pages/ChatPage";
+import { apiUrl } from "./config/api";
 
 function App() {
   const [apiStatus, setApiStatus] = useState("checking");
 
   useEffect(() => {
-    fetch("/api/health")
+    fetch(apiUrl("/api/health"))
       .then((res) => res.json())
       .then((data) => setApiStatus(data.status === "healthy" ? "ok" : "error"))
       .catch(() => setApiStatus("error"));

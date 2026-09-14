@@ -4,6 +4,7 @@ import ChatWindow from "../components/ChatWindow";
 import ChatInput from "../components/ChatInput";
 import useChat from "../hooks/useChat";
 import { Icons } from "../utils/Icons";
+import { apiUrl } from "../config/api";
 
 export default function ChatPage({ apiStatus }) {
   const {
@@ -29,7 +30,8 @@ export default function ChatPage({ apiStatus }) {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch("/api/sessions");
+      const res = await fetch(apiUrl("/api/sessions"));
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setSessions(data.sessions || []);
     } catch (err) {
@@ -39,7 +41,10 @@ export default function ChatPage({ apiStatus }) {
 
   const deleteSession = async (id) => {
     try {
-      await fetch(`/api/sessions/${id}`, { method: "DELETE" });
+      const res = await fetch(apiUrl(`/api/sessions/${id}`), {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSessions((prev) => prev.filter((s) => s.id !== id));
       if (sessionId === id) newChat();
     } catch (err) {}

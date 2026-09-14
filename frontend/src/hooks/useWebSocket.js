@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
+import { API_BASE_URL } from "../config/api";
 
 export default function useWebSocket() {
   const wsRef = useRef(null);
@@ -17,14 +18,32 @@ export default function useWebSocket() {
       return "ws://localhost:8000/ws/chat";
     }
 
-    const url = import.meta.env.VITE_WS_URL;
+    const configuredUrl = import.meta.env.VITE_WS_URL || API_BASE_URL;
 
-    if (!url) {
-      console.error("VITE_WS_URL is not defined");
+    if (!configuredUrl) {
+      console.error("VITE_WS_URL or VITE_API_URL is not defined");
       return null;
     }
 
-    return url;
+    try {
+      const url = new URL(configuredUrl);
+
+      // A page served over HTTPS may only open secure WebSockets. This also
+      // lets VITE_WS_URL be either the Render host or the full WS endpoint.
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+      }
+      if (window.location.protocol === "https:" && url.protocol === "ws:") {
+        url.protocol = "wss:";
+      }
+      if (url.pathname === "/" || url.pathname === "") {
+        url.pathname = "/ws/chat";
+      }
+      return url.toString();
+    } catch {
+      console.error("VITE_WS_URL must be a complete URL");
+      return null;
+    }
   };
 
   const connect = useCallback(() => {
