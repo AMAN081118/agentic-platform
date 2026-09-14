@@ -60,27 +60,34 @@ async def websocket_chat(websocket: WebSocket):
 
 @app.on_event("startup")
 async def startup_event():
+    """Warm optional services without making the HTTP server unavailable."""
     try:
         from db.supabase_client import get_supabase
         get_supabase()
+        print("Supabase client initialized")
+    except Exception as e:
+        # Keep the process alive so /api/health and CORS diagnostics still work.
+        # Requests that need Supabase will return their own error until its
+        # credentials/connectivity are corrected.
+        print(f"Supabase initialization failed: {e}")
 
+    try:
         from agent.configs.registry import load_all_agents
         load_all_agents()
 
         from agent.core.graph import get_agent_graph
         get_agent_graph()
-
-        try:
-            from memory.embeddings import EmbeddingService
-            info = EmbeddingService.get_model_info()
-            print(f"Embedding model: {info['model_name']} ({info['dimension']}d)")
-        except Exception as e:
-            print(f"Embedding model will load on first use: {e}")
-
-        print("Agentic AI Platform v0.5.0 started")
-        print("REST: http://localhost:8000/docs")
-        print("WS:   ws://localhost:8000/ws/chat")
-
+        print("Agent graph initialized")
     except Exception as e:
-        print(f"Startup error: {e}")
-        raise
+        print(f"Agent initialization failed: {e}")
+
+    try:
+        from memory.embeddings import EmbeddingService
+        info = EmbeddingService.get_model_info()
+        print(f"Embedding model: {info['model_name']} ({info['dimension']}d)")
+    except Exception as e:
+        print(f"Embedding model will load on first use: {e}")
+
+    print("Agentic AI Platform v0.5.0 started")
+    print("REST: http://localhost:8000/docs")
+    print("WS:   ws://localhost:8000/ws/chat")
