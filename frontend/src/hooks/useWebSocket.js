@@ -4,38 +4,51 @@ export default function useWebSocket() {
   const wsRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
+
   const reconnectAttempts = useRef(0);
   const reconnectTimer = useRef(null);
   const maxReconnectAttempts = 10;
+
   const messageHandlerRef = useRef(null);
   const mountedRef = useRef(true);
 
   const getWsUrl = () => {
-    // In dev, connect directly to backend
-    // In production, use relative path
     if (import.meta.env.DEV) {
       return "ws://localhost:8000/ws/chat";
     }
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    return `${protocol}//${window.location.host}/ws/chat`;
+
+    const url = import.meta.env.VITE_WS_URL;
+
+    if (!url) {
+      console.error("VITE_WS_URL is not defined");
+      return null;
+    }
+
+    return url;
   };
 
   const connect = useCallback(() => {
-    // Don't connect if already connected or component unmounted
     if (!mountedRef.current) return;
+
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
     if (wsRef.current?.readyState === WebSocket.CONNECTING) return;
 
-    // Clear any existing connection
     if (wsRef.current) {
       try {
         wsRef.current.close();
       } catch {}
+
       wsRef.current = null;
     }
 
     const url = getWsUrl();
-    console.log(`🔌 Connecting to ${url}...`);
+
+    if (!url) {
+      console.error("Cannot connect: WebSocket URL is missing");
+      return;
+    }
+
+    console.log(`Connecting to ${url}...`);
 
     try {
       const ws = new WebSocket(url);
@@ -45,7 +58,9 @@ export default function useWebSocket() {
           ws.close();
           return;
         }
+
         console.log("WebSocket connected");
+
         setIsConnected(true);
         setIsReconnecting(false);
         reconnectAttempts.current = 0;
@@ -54,6 +69,7 @@ export default function useWebSocket() {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+
           if (messageHandlerRef.current) {
             messageHandlerRef.current(data);
           }
@@ -65,33 +81,38 @@ export default function useWebSocket() {
       ws.onclose = (event) => {
         if (!mountedRef.current) return;
 
-        console.log(`🔌 WebSocket closed: ${event.code}`);
+        console.log(`WebSocket closed: ${event.code}`);
+
         setIsConnected(false);
         wsRef.current = null;
 
-        // Auto-reconnect unless intentionally closed
         if (
           event.code !== 1000 &&
           reconnectAttempts.current < maxReconnectAttempts
         ) {
           setIsReconnecting(true);
+
           const delay = Math.min(
             1000 * Math.pow(1.5, reconnectAttempts.current),
             15000,
           );
+
           reconnectAttempts.current += 1;
+
           console.log(
-            `Reconnecting in ${Math.round(delay)}ms (attempt ${reconnectAttempts.current})`,
+            `Reconnecting in ${Math.round(delay)}ms ` +
+              `(attempt ${reconnectAttempts.current})`,
           );
 
           reconnectTimer.current = setTimeout(() => {
-            if (mountedRef.current) connect();
+            if (mountedRef.current) {
+              connect();
+            }
           }, delay);
         }
       };
 
       ws.onerror = () => {
-        // onclose will fire after this, so just log
         console.warn("WebSocket error occurred");
       };
 
@@ -99,14 +120,6 @@ export default function useWebSocket() {
     } catch (err) {
       console.error("Failed to create WebSocket:", err);
       setIsConnected(false);
-
-      // Retry
-      if (reconnectAttempts.current < maxReconnectAttempts) {
-        reconnectAttempts.current += 1;
-        reconnectTimer.current = setTimeout(() => {
-          if (mountedRef.current) connect();
-        }, 2000);
-      }
     }
   }, []);
 
@@ -115,13 +128,17 @@ export default function useWebSocket() {
       clearTimeout(reconnectTimer.current);
       reconnectTimer.current = null;
     }
+
     reconnectAttempts.current = maxReconnectAttempts;
+
     if (wsRef.current) {
       try {
         wsRef.current.close(1000, "Client disconnect");
       } catch {}
+
       wsRef.current = null;
     }
+
     setIsConnected(false);
     setIsReconnecting(false);
   }, []);
@@ -136,6 +153,7 @@ export default function useWebSocket() {
         return false;
       }
     }
+
     return false;
   }, []);
 
@@ -145,7 +163,7 @@ export default function useWebSocket() {
 
   useEffect(() => {
     mountedRef.current = true;
-    // Small delay to let the backend start
+
     const timer = setTimeout(connect, 500);
 
     return () => {
