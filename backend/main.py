@@ -2,9 +2,11 @@
 Agentic AI Platform — Main Entry Point
 """
 
+import logging
 import os
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,6 +23,7 @@ app = FastAPI(
     description="A modular, configurable AI agent system",
     version="0.5.0",
 )
+logger = logging.getLogger(__name__)
 
 # Middleware (order matters — first added = outermost)
 app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
@@ -42,6 +45,16 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Return a browser-readable error while retaining server-side details."""
+    logger.exception("Unhandled error for %s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "The backend could not complete this request."},
+    )
 
 # REST Routes
 app.include_router(health_router, prefix="/api", tags=["Health"])
@@ -79,5 +92,3 @@ async def startup_event():
         print(f"Agent initialization failed: {e}")
 
     print("Agentic AI Platform v0.5.0 started")
-    print("REST: http://localhost:8000/docs")
-    print("WS:   ws://localhost:8000/ws/chat")

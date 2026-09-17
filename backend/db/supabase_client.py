@@ -5,6 +5,7 @@ Handles all direct communication with Supabase (Postgres + Auth).
 
 import os
 from typing import Optional
+from urllib.parse import urlparse
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -33,8 +34,15 @@ class SupabaseManager:
                     "SUPABASE_URL and SUPABASE_KEY must be set in .env"
                 )
 
+            parsed_url = urlparse(url)
+            if parsed_url.scheme != "https" or not parsed_url.hostname:
+                raise ValueError(
+                    "SUPABASE_URL must be the HTTPS Project URL, for example "
+                    "https://<project-ref>.supabase.co"
+                )
+
             self._client = create_client(url, key)
-            print("✅ Supabase client initialized")
+            print("Supabase client initialized")
 
         return self._client
 

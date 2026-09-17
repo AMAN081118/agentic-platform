@@ -16,10 +16,10 @@ def register_agent(config: AgentConfig) -> None:
     # Validate before registering
     issues = config.validate()
     if issues:
-        print(f"  ⚠️ Agent '{config.name}' has issues: {issues}")
+        print(f" Agent '{config.name}' has issues: {issues}")
 
     _AGENT_REGISTRY[config.name] = config
-    print(f"  📋 Registered agent: {config.name} (v{config.version})")
+    print(f" Registered agent: {config.name} (v{config.version})")
 
 
 def get_agent_config(name: str) -> AgentConfig:
@@ -30,7 +30,7 @@ def get_agent_config(name: str) -> AgentConfig:
     if name in _AGENT_REGISTRY:
         return _AGENT_REGISTRY[name]
 
-    print(f"⚠️ Agent '{name}' not found, using default")
+    print(f" Agent '{name}' not found, using default")
     return AgentConfig(
         name="default",
         description="A general-purpose AI assistant",
@@ -66,8 +66,8 @@ def get_agent_names() -> list[str]:
 
 def load_all_agents() -> None:
     """Import all agent config modules to trigger registration."""
-    print("🧠 Loading agent configs...")
+    print(" Loading agent configs...")
     from agent.configs import health_agent    # noqa: F401
     from agent.configs import sports_agent    # noqa: F401
     from agent.configs import education_agent # noqa: F401
-    print(f"✅ {len(_AGENT_REGISTRY)} agents loaded")
+    print(f" {len(_AGENT_REGISTRY)} agents loaded")

@@ -258,6 +258,6 @@ async def handle_websocket_chat(websocket: WebSocket):
     except WebSocketDisconnect:
         pass
     except Exception as e:
-        print(f"❌ WS error [{client_id}]: {e}")
+        print(f"WS error [{client_id}]: {e}")
     finally:
         manager.disconnect(client_id)

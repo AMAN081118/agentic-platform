@@ -17,13 +17,13 @@ class ConnectionManager:
         """Accept and register a new connection."""
         await websocket.accept()
         self.active_connections[client_id] = websocket
-        print(f"🔌 Client connected: {client_id} (total: {len(self.active_connections)})")
+        print(f"Client connected: {client_id} (total: {len(self.active_connections)})")
 
     def disconnect(self, client_id: str) -> None:
         """Remove a connection."""
         if client_id in self.active_connections:
             del self.active_connections[client_id]
-            print(f"🔌 Client disconnected: {client_id} (total: {len(self.active_connections)})")
+            print(f"Client disconnected: {client_id} (total: {len(self.active_connections)})")
 
     async def send_json(self, client_id: str, data: dict) -> bool:
         """Send JSON data to a specific client."""

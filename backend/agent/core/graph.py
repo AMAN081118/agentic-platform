@@ -105,5 +105,5 @@ def get_agent_graph():
     if _compiled_graph is None:
         graph = build_agent_graph()
         _compiled_graph = graph.compile()
-        print("✅ Agent graph compiled")
+        print(" Agent graph compiled")
     return _compiled_graph

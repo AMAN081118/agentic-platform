@@ -47,7 +47,7 @@ def bmi_calculator(input_str: str) -> str:
             f"  BMI: {bmi:.1f}\n"
             f"  Category: {category}\n"
             f"  Note: {advice}\n"
-            f"  ⚠️ BMI is a screening tool, not a diagnostic measure."
+            f"  BMI is a screening tool, not a diagnostic measure."
         )
     except (ValueError, IndexError):
         return "Error: Please provide input as 'weight_kg,height_m' (e.g., '75,1.80')"
@@ -105,7 +105,7 @@ def calorie_estimator(input_str: str) -> str:
             f"  For weight loss: ~{tdee - 500:.0f} cal/day\n"
             f"  For maintenance: ~{tdee:.0f} cal/day\n"
             f"  For weight gain: ~{tdee + 500:.0f} cal/day\n"
-            f"  ⚠️ This is an estimate. Consult a nutritionist for personalized advice."
+            f"  This is an estimate. Consult a nutritionist for personalized advice."
         )
     except (ValueError, IndexError) as e:
         return f"Error parsing input: {str(e)}"
@@ -149,7 +149,7 @@ def water_intake_calculator(input_str: str) -> str:
             f"  Activity: {activity}\n"
             f"  Recommended: {total_ml:.0f} ml ({total_liters:.1f} liters)\n"
             f"  That's about {glasses:.0f} glasses (250ml each)\n"
-            f"  💡 Drink more in hot weather or during exercise"
+            f"  Drink more in hot weather or during exercise"
         )
     except (ValueError, IndexError):
         return "Error: Format should be 'weight_kg,activity_level' (e.g., '75,moderate')"

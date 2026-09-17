@@ -41,14 +41,14 @@ class EmbeddingService:
         model_name = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
         cls._model_name = model_name
 
-        print(f"📦 Loading embedding model: {model_name}...")
+        print(f"Loading embedding model: {model_name}...")
         start = time.time()
 
         try:
             from sentence_transformers import SentenceTransformer
             cls._model = SentenceTransformer(model_name)
             elapsed = time.time() - start
-            print(f"✅ Embedding model loaded in {elapsed:.1f}s")
+            print(f"Embedding model loaded in {elapsed:.1f}s")
         except ImportError:
             raise ImportError(
                 "sentence-transformers not installed. "

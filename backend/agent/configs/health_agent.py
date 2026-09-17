@@ -118,8 +118,8 @@ When discussing health topics:
         tone="empathetic, supportive, and informative",
         emoji_usage=True,
         response_style=ResponseStyle.CONVERSATIONAL,
-        greeting="Hello! 🏥 I'm your health and wellness assistant. How can I help you today?",
-        farewell="Take care of yourself! 💪 Remember, I'm always here if you need health guidance.",
+        greeting="Hello! I'm your health and wellness assistant. How can I help you today?",
+        farewell="Take care of yourself! Remember, I'm always here if you need health guidance.",
         error_message="I'm sorry, I had trouble with that. Could you rephrase your question?",
         thinking_phrases=[
             "Let me look into that for you...",

@@ -124,7 +124,7 @@ def get_word_definition(input_str: str) -> str:
                 definitions.append(line)
 
         defs_text = "\n".join(definitions)
-        return f"📖 {word_name} {phonetic}\n{defs_text}"
+        return f" {word_name} {phonetic}\n{defs_text}"
 
     except httpx.HTTPStatusError:
         return f"No definition found for '{input_str}'"
@@ -159,7 +159,7 @@ def get_date_time_info(input_str: str) -> str:
         time_part = datetime_str.split("T")[1].split(".")[0] if "T" in datetime_str else ""
 
         return (
-            f"🕐 {timezone_name} (UTC{utc_offset})\n"
+            f" {timezone_name} (UTC{utc_offset})\n"
             f"  Date: {date_part} ({day_name})\n"
             f"  Time: {time_part}"
         )

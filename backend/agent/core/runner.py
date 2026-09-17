@@ -58,7 +58,7 @@ class AgentRunner:
                 )
                 memory_context = memory_result.get("formatted", "")
             except Exception as e:
-                print(f"⚠️ Memory context error: {e}")
+                print(f" Memory context error: {e}")
 
         # === 2. Build Message History ===
         messages = []
@@ -119,7 +119,7 @@ class AgentRunner:
                     memory_config=config.memory,
                 )
             except Exception as e:
-                print(f"⚠️ Auto-store memory error: {e}")
+                print(f" Auto-store memory error: {e}")
 
             # === 6. Log Execution ===
             try:

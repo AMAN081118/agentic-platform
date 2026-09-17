@@ -76,7 +76,7 @@ class LongTermMemory:
             return bool(result)
 
         except Exception as e:
-            print(f"❌ Memory store error: {e}")
+            print(f"Memory store error: {e}")
             return False
 
     @staticmethod
@@ -122,7 +122,7 @@ class LongTermMemory:
             return stored
 
         except Exception as e:
-            print(f"❌ Batch memory store error: {e}")
+            print(f"Batch memory store error: {e}")
             return 0
 
     @staticmethod

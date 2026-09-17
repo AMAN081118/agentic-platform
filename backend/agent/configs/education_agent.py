@@ -119,8 +119,8 @@ Teaching principles:
         tone="patient, encouraging, and clear",
         emoji_usage=True,
         response_style=ResponseStyle.DETAILED,
-        greeting="Hi there, learner! 📚 I'm your study buddy. What would you like to learn today?",
-        farewell="Great study session! 🌟 Keep up the curiosity — that's the best tool for learning!",
+        greeting="Hi there, learner! I'm your study buddy. What would you like to learn today?",
+        farewell="Great study session! Keep up the curiosity — that's the best tool for learning!",
         error_message="Hmm, I got a bit confused there. Could you rephrase your question?",
         thinking_phrases=[
             "Great question! Let me explain...",

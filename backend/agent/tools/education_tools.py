@@ -47,7 +47,7 @@ def flashcard_generator(input_str: str) -> str:
 
     if matched_topic:
         cards = flashcard_db[matched_topic]
-        output_lines = [f"📚 Flashcards: {matched_topic.title()}\n"]
+        output_lines = [f" Flashcards: {matched_topic.title()}\n"]
         for i, (q, a) in enumerate(cards, 1):
             output_lines.append(f"Card {i}:")
             output_lines.append(f"  Q: {q}")
@@ -96,7 +96,7 @@ def study_timer(input_str: str) -> str:
             work_end = elapsed + 25
             if work_end > total_minutes:
                 work_end = total_minutes
-            sessions.append(f"  {session_num}. 📖 Study {subject} ({elapsed}-{work_end} min)")
+            sessions.append(f"  {session_num}.  Study {subject} ({elapsed}-{work_end} min)")
             elapsed = work_end
             pomodoro_count += 1
             session_num += 1
@@ -107,22 +107,22 @@ def study_timer(input_str: str) -> str:
             # Break
             if pomodoro_count % long_break_after == 0:
                 break_end = min(elapsed + long_break_duration, total_minutes)
-                sessions.append(f"  ☕ Long break ({elapsed}-{break_end} min)")
+                sessions.append(f" Long break ({elapsed}-{break_end} min)")
                 elapsed = break_end
             else:
                 break_end = min(elapsed + 5, total_minutes)
-                sessions.append(f"  💤 Short break ({elapsed}-{break_end} min)")
+                sessions.append(f" Short break ({elapsed}-{break_end} min)")
                 elapsed = break_end
 
         schedule = "\n".join(sessions)
 
         return (
-            f"📅 Study Plan: {subject.title()}\n"
+            f"  Study Plan: {subject.title()}\n"
             f"  Total time: {total_hours} hours ({total_minutes} min)\n"
             f"  Method: Pomodoro Technique\n"
             f"  Pomodoros: {pomodoro_count}\n\n"
             f"  Schedule:\n{schedule}\n\n"
-            f"  💡 Tips:\n"
+            f"  Tips:\n"
             f"  - Remove distractions during study blocks\n"
             f"  - Review notes at the start of each pomodoro\n"
             f"  - Use breaks to move around and hydrate"
@@ -188,7 +188,7 @@ def grade_calculator(input_str: str) -> str:
             letter = "F"
 
         details_text = "\n".join(details)
-        weight_note = "" if abs(total_weight - 100) < 0.01 else f"\n  ⚠️ Weights sum to {total_weight}%, not 100%"
+        weight_note = "" if abs(total_weight - 100) < 0.01 else f"\n Weights sum to {total_weight}%, not 100%"
 
         return (
             f"Grade Report:\n{details_text}\n\n"
